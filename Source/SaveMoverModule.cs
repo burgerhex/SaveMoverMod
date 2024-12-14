@@ -58,7 +58,7 @@ public class SaveMoverModule : EverestModule {
                 self.Add(menuData = new DataComponent());
             } 
 
-            if (Input.MenuJournal.Pressed) {
+            if (self.Focused && Input.MenuJournal.Pressed) {
                 if (menuData.IsMoving){
                     Audio.Play("event:/ui/main/button_toggle_off");
                     menuData.IsMoving = false;
