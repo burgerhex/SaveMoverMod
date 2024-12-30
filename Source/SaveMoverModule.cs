@@ -7,6 +7,7 @@ using Monocle;
 using MonoMod.Cil;
 using System.Text.RegularExpressions;
 using System.Linq;
+using Microsoft.Xna.Framework;
 
 namespace Celeste.Mod.SaveMover;
 
@@ -40,9 +41,11 @@ public class SaveMoverModule : EverestModule {
         // IL.Celeste.OuiFileSelectSlot.Setup += onOuiFileSelectSetup;
         Logger.Log(nameof(SaveMoverModule), "Loading Hooks");
         On.Celeste.OuiFileSelect.Update += onFileSelectUpdate;
+        On.Celeste.Overworld.InputEntity.Render += InputEntityRender;
         Logger.Log(nameof(SaveMoverModule), "Hooks Loaded");
 
     }
+
 
     public override void Unload() {
         // TODO: unapply any hooks applied in Load()
@@ -50,6 +53,39 @@ public class SaveMoverModule : EverestModule {
     }
 
     #region Hook Definitions
+    private void InputEntityRender(On.Celeste.Overworld.InputEntity.orig_Render orig, Entity self)
+    {
+        // This should always work? idk how self can be anything else
+        Overworld.InputEntity inputEntity = (Overworld.InputEntity)self;
+        if(!(inputEntity.Overworld.Current is OuiFileSelect)) {
+            orig(self);
+            return;
+        }
+        float inputEase = inputEntity.Overworld.inputEase;
+        if(inputEase <= 0) {
+            orig(self);
+            return;
+        }
+        var wiggler = inputEntity.Get<Wiggler>();
+        OuiFileSelect fileSelect = (OuiFileSelect)inputEntity.Overworld.Current;
+        
+        var menuData = fileSelect.Get<DataComponent>();
+        if (menuData is null) {
+            fileSelect.Add(menuData = new DataComponent());
+        }
+        string dialogId = "MENU_MOVE_SAVE";
+        if(menuData.IsMoving) {
+            dialogId = "MENU_STOP_MOVING";
+        } 
+        
+        string label = Dialog.Clean(dialogId);
+        float buttonWidth = ButtonUI.Width(label, Settings.SaveMoverBind.Button);
+        Vector2 position = new Vector2(0f, 1024f);
+        position.X += buttonWidth*0.5f;
+        ButtonUI.Render(position, label, Settings.SaveMoverBind.Button, 0.5f, 1f, wiggler.Value * 0.05f);
+        orig(self);
+    }
+
         private static void onFileSelectUpdate(On.Celeste.OuiFileSelect.orig_Update orig, OuiFileSelect self) {
             // make sure vanilla portraits are loaded (in case the player played a map with a custom Portraits.xml).
             // GFX.PortraitsSpriteBank = new SpriteBank(GFX.Portraits, Path.Combine("Graphics", "Portraits.xml"));
