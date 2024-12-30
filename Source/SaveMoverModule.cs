@@ -80,7 +80,7 @@ public class SaveMoverModule : EverestModule {
         
         string label = Dialog.Clean(dialogId);
         float buttonWidth = ButtonUI.Width(label, Settings.SaveMoverBind.Button);
-        Vector2 position = new Vector2(0f, 1024f);
+        Vector2 position = new Vector2(40f, 1024f);
         position.X += buttonWidth*0.5f;
         ButtonUI.Render(position, label, Settings.SaveMoverBind.Button, 0.5f, 1f, wiggler.Value * 0.05f);
         orig(self);
