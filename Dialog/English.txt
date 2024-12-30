@@ -1,0 +1,2 @@
+MENU_MOVE_SAVE= Move Save File
+MENU_STOP_MOVING= Stop Moving Save File
