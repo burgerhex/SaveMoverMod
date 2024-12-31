@@ -146,6 +146,7 @@ public class SaveMoverModule : EverestModule {
             if (menuData.IsMoving) {
                 // (self as Oui).Update();
                 if (!self.Focused)  {
+                    menuData.IsMoving = false;
                     return;
                 }
                 if (!self.SlotSelected) {
