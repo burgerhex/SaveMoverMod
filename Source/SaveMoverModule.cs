@@ -108,9 +108,9 @@ public class SaveMoverModule : EverestModule {
                     foreach (var file in dir.EnumerateFiles($"{menuData.StartSlot}-*.celeste").Concat(dir.EnumerateFiles($"{menuData.StartSlot}.celeste"))) {
                         var regex = new Regex(Regex.Escape($"{menuData.StartSlot}"));
                         string movedPath = regex.Replace(file.Name, $"{self.SlotIndex}", 1);
-                        string tempPath = $"./Saves/temp_{file.Name}";
-                        movedFiles.Add(new Tuple<string, string>(tempPath, $"./Saves/{movedPath}"));
-                        File.Move($"./Saves/{file.Name}", tempPath);
+                        string tempPath = searchDirectory + $"/temp_{file.Name}";
+                        movedFiles.Add(new Tuple<string, string>(tempPath, searchDirectory + $"/{movedPath}"));
+                        File.Move(searchDirectory + $"/{file.Name}", tempPath);
                     }
 
                     if (menuData.StartSlot > self.SlotIndex) {
@@ -118,7 +118,7 @@ public class SaveMoverModule : EverestModule {
                             foreach(var file in dir.EnumerateFiles($"{i}-*.celeste").Concat(dir.EnumerateFiles($"{i}.celeste"))) {
                                 var regex = new Regex(Regex.Escape($"{i}"));
                                 string movedPath = regex.Replace(file.Name, $"{i+1}", 1);
-                                File.Move($"./Saves/{file.Name}", $"./Saves/{movedPath}");
+                                File.Move(searchDirectory + $"/{file.Name}", searchDirectory + $"/{movedPath}");
                             }
                         }
                     } else if (menuData.StartSlot < self.SlotIndex) {
@@ -126,7 +126,7 @@ public class SaveMoverModule : EverestModule {
                             foreach(var file in dir.EnumerateFiles($"{i+1}-*.celeste").Concat(dir.EnumerateFiles($"{i+1}.celeste"))) {
                                 var regex = new Regex(Regex.Escape($"{i+1}"));
                                 string movedPath = regex.Replace(file.Name, $"{i}", 1);
-                                File.Move($"./Saves/{file.Name}", $"./Saves/{movedPath}");
+                                File.Move(searchDirectory + $"/{file.Name}", searchDirectory + $"/{movedPath}");
                             }
                         }
                     }
